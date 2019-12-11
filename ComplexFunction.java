@@ -28,6 +28,7 @@ public class ComplexFunction implements complex_function {
 		switch (s) {
 		case "plus":cf.plus(f2);
 			break;
+			
 		case "mul":cf.mul(f2);
 			break;
 		case "min":cf.min(f2);
