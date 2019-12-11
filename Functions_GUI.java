@@ -3,15 +3,17 @@ package Ex1;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+//import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-//import org.json.simple.JSONObject;
-//import org.json.simple.JSONArray;
-//import org.json.simple.parser.ParseException;
-//import org.json.simple.parser.JSONParser;
+import java.io.FileReader;
+
+import com.google.gson.*;
+
 public class Functions_GUI implements functions {
 	ArrayList<function> coll;
 	@Override
@@ -148,9 +150,44 @@ public class Functions_GUI implements functions {
 	}
 
 	@Override
-	public void drawFunctions(String json_file) {
-		// TODO Auto-generated method stub
+	public void drawFunctions(String json_file) {	
+//		Gson gson = new Gson();
+//		class Ratio{
+//			int height;
+//			int width;
+//			int resolution;
+//		}
+//		try (Reader reader = new FileReader(json_file)) {
+//
+//	            // Convert JSON File to Java Object
+//			Range rng = gson.fromJson(reader, Range.class);
+//			Ratio rat = gson.fromJson(reader, Ratio.class);
+//	        } catch (IOException e) {
+//	            e.printStackTrace();
+//	            }	
+		 JsonParser parser = new JsonParser();
+	     Object obj;
+		try {
+			obj = parser.parse(new FileReader(json_file));
 		
+	     JsonObject jsonObject = (JsonObject) obj;
+	 
+	     int height=  jsonObject.getAsJsonPrimitive("Height").getAsInt();
+	     int width=  jsonObject.getAsJsonPrimitive("Width").getAsInt();
+	     int resolution= jsonObject.getAsJsonPrimitive("Resolution").getAsInt();
+	     
+	     JsonArray x= jsonObject.getAsJsonArray("Range_X");
+	     Range rx= new Range(x.get(0).getAsDouble(), x.get(1).getAsDouble());
+	     
+	     JsonArray y= jsonObject.getAsJsonArray("Range_Y");
+	     Range ry= new Range(y.get(0).getAsDouble(), y.get(1).getAsDouble());
+	     
+	     this.drawFunctions(width, height, rx, ry, resolution);
+		
+		} catch (JsonIOException | JsonSyntaxException | FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -35,6 +35,7 @@ public class Polynom implements Polynom_able{
 	 */
 	public Polynom(String s) {
 		int level=0;//balance and sequence check
+		s=s.replace(" ","");
 		if(s.isBlank())throw new RuntimeException("ERR this string is empty");
 		if(s.endsWith("+")||s.endsWith("-")||s.endsWith("*"))throw new RuntimeException("ERR wrong formatgot:  "+s);
 		char c;

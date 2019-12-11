@@ -44,6 +44,11 @@ public class ComplexFunction implements complex_function {
 		}
 	}
 
+	public ComplexFunction(Operation op, function f1, function f2) {
+		function f=f1.copy();
+		this.left= new ComplexFunction(f,f2,op);
+	}
+
 	@Override
 	public double f(double x) {
 		switch (op) {
@@ -118,6 +123,10 @@ public class ComplexFunction implements complex_function {
 	public function copy() {
 		ComplexFunction cf= new ComplexFunction(this.left.copy(),this,op);
 		return cf;
+//		ComplexFunction cf= new ComplexFunction(this.left);
+//		if(this.right==null)return cf;
+//		cf= new ComplexFunction(cf.left,this.right,op);
+//		return cf;
 	}
 
 	@Override
