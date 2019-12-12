@@ -59,6 +59,7 @@ public class ComplexFunction implements complex_function {
 	 * @param f2
 	 */
 	public ComplexFunction(String s, function f1, function f2) {
+		this.op=Operation.None;
 		switch (s) {
 		case "plus":this.left=new ComplexFunction(f1,f2,Operation.Plus);
 			break;
@@ -86,7 +87,8 @@ public class ComplexFunction implements complex_function {
 		switch (op) {
 		case Plus: return this.left.f(x)+this.right.f(x);
 		case Times: return this.left.f(x)*this.right.f(x);
-		case Divid: return this.left.f(x)/this.right.f(x);
+		case Divid: if(this.right.f(x)==0) {throw new ArithmeticException("/ by zero"); }
+		else return this.left.f(x)/this.right.f(x);
 		case Max: return Math.max(this.left.f(x),this.right.f(x));
 		case Min: return Math.min(this.left.f(x),this.right.f(x));
 		case Comp: return this.left.f(this.right.f(x));
@@ -117,24 +119,7 @@ public class ComplexFunction implements complex_function {
 		op=s.substring(0,pr);
 		int mid=middel(s);
 		return new ComplexFunction(op,this.recInit(s.substring(pr+1,mid)),this.recInit(s.substring(mid+1,s.length()-1)));
-//		ComplexFunction cf= new ComplexFunction(this.recInit(s.substring(pr+1,mid)));
-//		switch (op) {
-//		case "plus":cf.plus(this.recInit(s.substring(mid+1,s.length()-1)));
-//			break;
-//		case "mul":cf.mul(this.recInit(s.substring(mid+1,s.length()-1)));
-//			break;
-//		case "min":cf.min(this.recInit(s.substring(mid+1,s.length()-1)));
-//			break;
-//		case "max":cf.max(this.recInit(s.substring(mid+1,s.length()-1)));
-//			break;
-//		case "comp":cf.comp(this.recInit(s.substring(mid+1,s.length()-1)));
-//			break;
-//		case "div":cf.div(this.recInit(s.substring(mid+1,s.length()-1)));
-//			break;
-//		default:
-//			throw new IllegalArgumentException("Unexpected value: " + op);
-//		}
-//		return cf;
+
 	}
 
 	/**
@@ -224,8 +209,13 @@ public class ComplexFunction implements complex_function {
 	
 	public String toString() {
 		if(op==Operation.None)return this.left.toString();
-		return (toString(this.op).concat("(".concat(this.left.toString()
-				.concat(",".concat(this.right.toString().concat(")"))))));	
+		String s=toString(this.op);
+		s=s+"(";
+		s=s+this.left.toString()+",";
+		s+=this.right.toString()+")";
+		return s;
+//				(toString(this.op).concat("(".concat(this.left.toString()
+//				.concat(",".concat(this.right.toString().concat(")"))))));	
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -246,8 +236,14 @@ public class ComplexFunction implements complex_function {
 
 	private boolean equalsInNeighborhood(ComplexFunction complexFunction, function f, double d) {
 		double eps=0001;
-		for(;d<1000*eps;d+=eps) {
-			if(this.f(d)!=f.f(d)||this.f(-d)!=f.f(-d))return false;
+		int i=0;
+		for(int j=0;j<1000;j++) {
+			d+=eps;
+			try{if(this.f(d)!=f.f(d)||this.f(-d)!=f.f(-d))return false;
+			}catch(ArithmeticException e) {i++;
+			if(i==999)return false;
+			continue;
+			}
 		}
 		return true;
 	}

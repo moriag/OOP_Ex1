@@ -146,13 +146,18 @@ public class Functions_GUI implements functions {
 		step=(maxx-minx)/resolution;
 		StdDraw.setXscale(minx,maxx);
 		StdDraw.setYscale(ry.get_min(), ry.get_max());
+		StdDraw.clear();
 		double x0,x1=0;
+		StdDraw.line(0,ry.get_min() ,0, ry.get_max());
+		StdDraw.line(minx,0 ,maxx, 0);
 		for(function f: this.coll) {
+			StdDraw.setPenColor((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
 			for(x0= minx;x1<maxx;x0=x1) {
 				x1=x0+step;
 				StdDraw.line(x0,f.f(x0) ,x1, f.f(x1));
 			}
 		}
+		
 	}
 
 	@Override
