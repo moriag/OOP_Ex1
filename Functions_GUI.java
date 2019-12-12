@@ -1,4 +1,4 @@
-package Ex1;
+package Ex1; 
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,6 +16,12 @@ import com.google.gson.*;
 
 public class Functions_GUI implements functions {
 	ArrayList<function> coll;
+	
+	public Functions_GUI() {
+		this.coll=new ArrayList<function>();
+
+	}
+	
 	@Override
 	public int size() {
 		return coll.size();
@@ -140,9 +146,9 @@ public class Functions_GUI implements functions {
 		step=(maxx-minx)/resolution;
 		StdDraw.setXscale(minx,maxx);
 		StdDraw.setYscale(ry.get_min(), ry.get_max());
-		double x0,x1;
+		double x0,x1=0;
 		for(function f: this.coll) {
-			for(x0= minx;x0<maxx;x0=x1) {
+			for(x0= minx;x1<maxx;x0=x1) {
 				x1=x0+step;
 				StdDraw.line(x0,f.f(x0) ,x1, f.f(x1));
 			}
@@ -151,20 +157,6 @@ public class Functions_GUI implements functions {
 
 	@Override
 	public void drawFunctions(String json_file) {	
-//		Gson gson = new Gson();
-//		class Ratio{
-//			int height;
-//			int width;
-//			int resolution;
-//		}
-//		try (Reader reader = new FileReader(json_file)) {
-//
-//	            // Convert JSON File to Java Object
-//			Range rng = gson.fromJson(reader, Range.class);
-//			Ratio rat = gson.fromJson(reader, Ratio.class);
-//	        } catch (IOException e) {
-//	            e.printStackTrace();
-//	            }	
 		 JsonParser parser = new JsonParser();
 	     Object obj;
 		try {
