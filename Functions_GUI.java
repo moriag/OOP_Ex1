@@ -140,6 +140,7 @@ public class Functions_GUI implements functions {
 	@Override
 	public void drawFunctions(int width, int height, Range rx, Range ry, int resolution) {
 		StdDraw.setCanvasSize(width,height);
+		
 		double minx,maxx,step;
 		minx=rx.get_min();
 		maxx=rx.get_max();
@@ -147,7 +148,16 @@ public class Functions_GUI implements functions {
 		StdDraw.setXscale(minx,maxx);
 		StdDraw.setYscale(ry.get_min(), ry.get_max());
 		StdDraw.clear();
+		StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
 		double x0,x1=0;
+		for(int x=-(int)(-minx);x<maxx;x++) {
+			StdDraw.line(x,ry.get_min(),x, ry.get_max());	
+		}
+		for(int y=-(int)(-ry.get_min());y<ry.get_max();y++) {
+			StdDraw.line(minx,y, maxx,y);	
+		}
+		
+		StdDraw.setPenColor(StdDraw.BLACK);
 		StdDraw.line(0,ry.get_min() ,0, ry.get_max());
 		StdDraw.line(minx,0 ,maxx, 0);
 		for(function f: this.coll) {

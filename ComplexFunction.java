@@ -87,8 +87,8 @@ public class ComplexFunction implements complex_function {
 		switch (op) {
 		case Plus: return this.left.f(x)+this.right.f(x);
 		case Times: return this.left.f(x)*this.right.f(x);
-		case Divid: if(this.right.f(x)==0) {throw new ArithmeticException("/ by zero"); }
-		else return this.left.f(x)/this.right.f(x);
+		case Divid: if(this.right.f(x)==0)throw new ArithmeticException("/ by zero");
+			else return this.left.f(x)/this.right.f(x);
 		case Max: return Math.max(this.left.f(x),this.right.f(x));
 		case Min: return Math.min(this.left.f(x),this.right.f(x));
 		case Comp: return this.left.f(this.right.f(x));
@@ -166,9 +166,15 @@ public class ComplexFunction implements complex_function {
 
 	@Override
 	public void div(function f1) {
-		this.left = new ComplexFunction(this,f1,Operation.Divid);
+		boolean iszero=false;
+		try{iszero=((Polynom)f1).isZero();}catch (Exception e) {
+			iszero=f1.equals(f1.copy().initFromString("0"));
+		}
+		if(!iszero) {
+			this.left = new ComplexFunction(this,f1,Operation.Divid);
+		}else { throw new ArithmeticException("divid by zero");}
 	}
-
+	
 	@Override
 	public void max(function f1) {
 		this.left = new ComplexFunction(this,f1,Operation.Max);
@@ -209,41 +215,52 @@ public class ComplexFunction implements complex_function {
 	
 	public String toString() {
 		if(op==Operation.None)return this.left.toString();
-		String s=toString(this.op);
-		s=s+"(";
-		s=s+this.left.toString()+",";
-		s+=this.right.toString()+")";
-		return s;
-//				(toString(this.op).concat("(".concat(this.left.toString()
-//				.concat(",".concat(this.right.toString().concat(")"))))));	
+		return toString(this.op).concat("(".concat(this.left.toString()
+				.concat(",".concat(this.right.toString().concat(")")))));	
 	}
 	@Override
 	public boolean equals(Object obj) {
 		if(!(obj instanceof function)){return false;}
 		function func=(function)obj;
-		return this.partialyEquals(func);
+		return this.partialyEquals(func,0.0001);
 	}
 
-	private boolean partialyEquals(function f) {
+	private boolean partialyEquals(function f, double eps) {
 		double d;
-		if(!equalsInNeighborhood(this,f,0))return false;
-		for(int r=1; r<100000;r*=10) {
+		if(!equalsInNeighborhood(this,f,0,eps))return false;
+		if(!equalsInNeighborhood(this,f,0,-eps))return false;
+		eps*=7;
+		for(int r=1; r<1000000;r*=7) {
 			d=Math.random()*r+r;
-			if(!equalsInNeighborhood(this,f,d))return false;
+			if(!equalsInNeighborhood(this,f,d,eps))return false;
+			if(!equalsInNeighborhood(this,f,-d,-eps))return false;
 		}
 		return true;
 	}
 
-	private boolean equalsInNeighborhood(ComplexFunction complexFunction, function f, double d) {
-		double eps=0001;
-		int i=0;
-		for(int j=0;j<1000;j++) {
-			d+=eps;
-			try{if(this.f(d)!=f.f(d)||this.f(-d)!=f.f(-d))return false;
-			}catch(ArithmeticException e) {i++;
-			if(i==999)return false;
-			continue;
+	private boolean equalsInNeighborhood(ComplexFunction complexFunction, function f,double d, double eps) {
+	
+		boolean zero1,zero2;
+		double f1,f2;
+		f1=f2=0;
+
+		for(double x=d; ((x-d<=1) && (x-d>=-1)) ;x+=eps) {
+			try {
+				f1=this.f(x);
+				zero1=false;
+			}catch (ArithmeticException e) {
+				zero1=true;
 			}
+			try {
+				f2=f.f(x);
+				zero2=false;
+			}catch (ArithmeticException e) {
+				zero2=true;
+			}
+
+			if( (zero1==zero2) && ( (zero1==true) || ((f1-f2<0.0000001) && (f1-f2>-0000001)) ) )
+				continue;
+			return false;
 		}
 		return true;
 	}
