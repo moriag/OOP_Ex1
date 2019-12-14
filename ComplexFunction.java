@@ -166,13 +166,18 @@ public class ComplexFunction implements complex_function {
 
 	@Override
 	public void div(function f1) {
-		boolean iszero=false;
-		try{iszero=((Polynom)f1).isZero();}catch (Exception e) {
-			iszero=f1.equals(f1.copy().initFromString("0"));
-		}
-		if(!iszero) {
-			this.left = new ComplexFunction(this,f1,Operation.Divid);
-		}else { throw new ArithmeticException("divid by zero");}
+//		**a function that is not defined for every x will be equal to another function
+//		if and only if that function is also not defined for every x
+//		since base function can be changed after addition to ComplexFunction
+//		the following check is costly and meaningless and so was removed.
+//		boolean iszero=false;
+//		try{iszero=((Polynom)f1).isZero();}catch (Exception e) {
+//			if(!(f1 instanceof ComplexFunction))
+//				iszero=f1.equals(f1.copy().initFromString("0"));
+//		}
+//		if(!iszero) {
+		this.left = new ComplexFunction(this,f1,Operation.Divid);
+//		}else { throw new ArithmeticException("divid by zero");}
 	}
 	
 	@Override
@@ -221,48 +226,78 @@ public class ComplexFunction implements complex_function {
 	@Override
 	public boolean equals(Object obj) {
 		if(!(obj instanceof function)){return false;}
-		function func=(function)obj;
-		return this.partialyEquals(func,0.0001);
-	}
-
-	private boolean partialyEquals(function f, double eps) {
-		double d;
-		if(!equalsInNeighborhood(this,f,0,eps))return false;
-		if(!equalsInNeighborhood(this,f,0,-eps))return false;
-		eps*=7;
-		for(int r=1; r<1000000;r*=7) {
-			d=Math.random()*r+r;
-			if(!equalsInNeighborhood(this,f,d,eps))return false;
-			if(!equalsInNeighborhood(this,f,-d,-eps))return false;
+		boolean cf1,cf2;
+		cf1=cf2=true;
+		function f1,f2;
+		f2=(function)obj;
+		f1=this;
+		if(this.getOp()==Operation.None) {
+			f1=this.left;
+			cf1=false;
+			}
+		if(f2 instanceof ComplexFunction&&((ComplexFunction)f2).getOp()==Operation.None) {
+			cf2=false;
+			f2=((ComplexFunction)f2).left;
 		}
-		return true;
+		if(!cf1&&!cf2) {
+			if( ((f1 instanceof Polynom)||(f1 instanceof Monom)) &&
+				((f2 instanceof Polynom)||(f2 instanceof Monom))){
+				return f1.equals(f2);
+				}
+			}
+		if(!cf1 && !(f1 instanceof Polynom) && !(f1 instanceof Monom) ){
+			try {return f1.equals(f2);}catch (Exception e) {;}
+			}
+		if(!cf2 && !(f2 instanceof Polynom) && !(f2 instanceof Monom) ){
+			try {return f2.equals(f1);}catch (Exception e) {;}	
+			}
+		return this.partialyEquals(f2,0.0001);//both ComplexFunction or can't be compared for some reason; 
 	}
-
-	private boolean equalsInNeighborhood(ComplexFunction complexFunction, function f,double d, double eps) {
 	
+	private boolean partialyEquals(function f, double eps) {
+		double x;
+		for(x=0; x<10000;x+=(Math.random())+0.65) {
+			if(!equalsInNeighborhood(this,f,x))return false;
+			if(!equalsInNeighborhood(this,f,-x))return false;
+			}
+		for(int i=0; i<10; i++) {
+			x=Math.random();
+			if(!equalsInNeighborhood(this,f,x))return false;
+			if(!equalsInNeighborhood(this,f,-x))return false;
+			}
+	
+		return true;
+			
+	}
+		
+		
+	private boolean equalsInNeighborhood(ComplexFunction complexFunction, function f, double x) {
 		boolean zero1,zero2;
 		double f1,f2;
 		f1=f2=0;
-
-		for(double x=d; ((x-d<=1) && (x-d>=-1)) ;x+=eps) {
+		for(int i=0;i<2;i++) {
 			try {
-				f1=this.f(x);
+				f1+=this.f(x);
 				zero1=false;
 			}catch (ArithmeticException e) {
 				zero1=true;
 			}
 			try {
-				f2=f.f(x);
+				f2+=f.f(x);
 				zero2=false;
 			}catch (ArithmeticException e) {
 				zero2=true;
 			}
-
-			if( (zero1==zero2) && ( (zero1==true) || ((f1-f2<0.0000001) && (f1-f2>-0000001)) ) )
+			if(zero1!=zero2) {
+				f1=f2=0;
+				if(x<0)x-=0.0001;
+				else{x+=0.0001;}
 				continue;
-			return false;
+			}
+			if(!((f1-f2<0.0000001) && (f1-f2>-0000001)))return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 }

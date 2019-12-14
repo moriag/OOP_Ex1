@@ -217,7 +217,7 @@ public class Polynom implements Polynom_able{
 		p.add(this);
 		p.multiply(Monom.MINUS1);
 		if(obj instanceof Monom) {p.add((Monom)obj); return p.isZero();}
-		if(obj instanceof Polynom) {p.add((Monom)obj); return p.isZero();}
+		if(obj instanceof Polynom) {p.add((Polynom)obj); return p.isZero();}
 		if(obj instanceof function)return ((function)obj).equals(this);
 		return false;
 		

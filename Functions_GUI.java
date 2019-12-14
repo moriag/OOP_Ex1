@@ -148,6 +148,7 @@ public class Functions_GUI implements functions {
 		StdDraw.setXscale(minx,maxx);
 		StdDraw.setYscale(ry.get_min(), ry.get_max());
 		StdDraw.clear();
+//		StdDraw.enableDoubleBuffering();
 		StdDraw.setPenColor(StdDraw.LIGHT_GRAY);
 		double x0,x1=0;
 		for(int x=-(int)(-minx);x<maxx;x++) {
@@ -160,12 +161,19 @@ public class Functions_GUI implements functions {
 		StdDraw.setPenColor(StdDraw.BLACK);
 		StdDraw.line(0,ry.get_min() ,0, ry.get_max());
 		StdDraw.line(minx,0 ,maxx, 0);
-		for(function f: this.coll) {
+		StdDraw.setPenRadius(0.002);
+		for(function f: this) {
+//			StdDraw.textLeft((minx+maxx)/2.5, f.f((minx+maxx)/2.5), f.toString());
 			StdDraw.setPenColor((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
 			for(x0= minx;x1<maxx;x0=x1) {
+				
 				x1=x0+step;
 				StdDraw.line(x0,f.f(x0) ,x1, f.f(x1));
 			}
+			x1=x0=minx;
+			StdDraw.show();
+			StdDraw.pause(500);
+			
 		}
 		
 	}
