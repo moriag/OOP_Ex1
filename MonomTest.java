@@ -1,7 +1,5 @@
 package Ex1;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 
 import org.junit.Test;
@@ -73,7 +71,21 @@ public class MonomTest {
 	public void testGet_power() {;}
 
 	@Test
-	public void testDerivative() {;}
+	public void testDerivative() {
+		Monom[] m= new Monom[10];
+		m[0]=Monom.ONE;	
+		m[1]=(Monom)(m[0].initFromString("x"));
+		for(int i=2; i<m.length ; i++) {
+			m[i]=(Monom)(m[i-1].copy());
+			m[i].multipy(m[1]);
+		}
+		assert(m[0].derivative().isZero());
+		for(int i=1; i<m.length ; i++) {
+			m[i-1].multipy(new Monom(m[i].get_power(),0));
+			assert(m[i-1].equals(m[i].derivative()));
+		}
+		
+	}
 
 	@Test
 	public void testF() {;}

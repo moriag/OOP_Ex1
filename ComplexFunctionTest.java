@@ -1,7 +1,5 @@
 package Ex1;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.Test;
 

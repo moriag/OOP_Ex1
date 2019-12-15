@@ -153,6 +153,7 @@ public class Polynom implements Polynom_able{
 	public void add(Polynom_able p1) {	
 		if(p1.isZero())
 			return;
+		if(this==p1){p1=(Polynom_able) p1.copy();}
 		p1.iteretor().forEachRemaining(m->{if(m!=null)this.add(new Monom(m));});
 	}
 
@@ -172,6 +173,7 @@ public class Polynom implements Polynom_able{
 
 	@Override
 	public void substract(Polynom_able p1) {
+		if(this==p1){p1=(Polynom_able) p1.copy();}
 		p1.iteretor().forEachRemaining(m->{if(m!=null)this.add(new Monom(-1*m.get_coefficient(),m.get_power()));});		
 	}
 
@@ -182,8 +184,7 @@ public class Polynom implements Polynom_able{
 			return;
 		}
 		Polynom multi=new Polynom();//to use in iterations
-		
-		Polynom_able a= (Polynom_able) p1.copy();		
+		Polynom a= new Polynom();		
 
 		this.iteretor().forEachRemaining(m ->{
 			a.multiply(Monom.ZERO);
@@ -259,10 +260,8 @@ public class Polynom implements Polynom_able{
 		});
 		return ans;
 	}
-//
-//	
-//	
-//	
+
+
 	@Override
 	public double area(double x0, double x1, double eps) {
 		if(x0>=x1||eps<=0)throw new RuntimeException("ERR need to be x1,x0,eps so that x0<x1, eps>0");
